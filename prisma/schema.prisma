@@ -7,7 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
 model User {
-  id   Int    @id @default(autoincrement())
-  name String
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  password           String
+  role               UserRole   @default(PATIENT)
+  needPasswordChange Boolean    @default(true)
+  status             UserStatus @default(ACTIVE)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@map("users")
+}
+
+model Admin {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  profilePhoto  String?
+  contactNumber String
+  isDeleted     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Doctor {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  name                String
+  profilePhoto        String?
+  contactNumber       String
+  address             String
+  experience          Int      @default(0)
+  registrationNumber  String
+  gender              Gender
+  appointmentFee      Int
+  qualification       String
+  currentWorkingPlace String
+  designation         String
+  isDeleted           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("doctors")
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
