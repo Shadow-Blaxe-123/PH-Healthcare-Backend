@@ -12,5 +12,17 @@ router.post(
   validateRequest(UserValidation.createPatientValidationSchema),
   UserController.createPatient
 );
+router.post(
+  "/create-doctor",
+  fileUploader.upload.single("file"),
+  validateRequest(UserValidation.createDoctorValidationSchema),
+  UserController.createDoctor
+);
+router.post(
+  "/create-patient",
+  fileUploader.upload.single("file"),
+  validateRequest(UserValidation.createPatientValidationSchema),
+  UserController.createPatient
+);
 
 export const userRoutes = router;
