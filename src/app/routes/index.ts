@@ -10,11 +10,7 @@ interface Route {
 
 const moduleRoutes: Route[] = [
   {
-    path: "/",
-    route: router,
-  },
-  {
-    path: "/users",
+    path: "/user",
     route: userRoutes,
   },
 ];
