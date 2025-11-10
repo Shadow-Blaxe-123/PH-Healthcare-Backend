@@ -19,7 +19,7 @@ model Admin {
     email         String   @unique
     name          String
     profilePhoto  String?
-    contactNumber String
+    contactNumber String?
     isDeleted     Boolean  @default(false)
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
@@ -34,15 +34,15 @@ model Doctor {
     email               String   @unique
     name                String
     profilePhoto        String?
-    contactNumber       String
-    address             String
-    experience          Int      @default(0)
-    registrationNumber  String
-    gender              Gender
-    appointmentFee      Int
-    qualification       String
-    currentWorkingPlace String
-    designation         String
+    contactNumber       String?
+    address             String?
+    experience          Int?     @default(0)
+    registrationNumber  String?
+    gender              Gender?
+    appointmentFee      Int?
+    qualification       String?
+    currentWorkingPlace String?
+    designation         String?
     isDeleted           Boolean  @default(false)
     createdAt           DateTime @default(now())
     updatedAt           DateTime @updatedAt

@@ -19,10 +19,10 @@ router.post(
   UserController.createDoctor
 );
 router.post(
-  "/create-patient",
+  "/create-admin",
   fileUploader.upload.single("file"),
-  validateRequest(UserValidation.createPatientValidationSchema),
-  UserController.createPatient
+  validateRequest(UserValidation.createAdminValidationSchema),
+  UserController.createAdmin
 );
 
 export const userRoutes = router;
