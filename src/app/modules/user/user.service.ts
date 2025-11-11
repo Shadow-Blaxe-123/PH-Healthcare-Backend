@@ -74,7 +74,7 @@ const createAdmin = async (req: Request) => {
   return result;
 };
 
-const getAllUsers = async (params, options: IOptions) => {
+const getAllUsers = async (params: any, options: IOptions) => {
   const { page, limit, skip, sortBy, sort } =
     paginationHelper.calculatePagination(options);
 
@@ -114,7 +114,18 @@ const getAllUsers = async (params, options: IOptions) => {
       [sortBy]: sort,
     },
   });
-  return result;
+
+  const total = await prisma.user.count({
+    where: whereConditions,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 export const UserService = {
