@@ -4,6 +4,7 @@ import prisma from "../../shared/prisma";
 import { ICreatePatientInput } from "./user.interface";
 import bcrypt from "bcryptjs";
 import { fileUploader } from "../../helper/fileUploader";
+import { UserRole } from "@prisma/client";
 
 const createPatient = async (req: Request) => {
   if (req.file) {
@@ -38,6 +39,7 @@ const createDoctor = async (req: Request) => {
       data: {
         email: req.body.doctor.email,
         password: hashedPassword,
+        role: UserRole.DOCTOR,
       },
     });
     return tx.doctor.create({
@@ -59,6 +61,7 @@ const createAdmin = async (req: Request) => {
       data: {
         email: req.body.admin.email,
         password: hashedPassword,
+        role: UserRole.ADMIN,
       },
     });
     return tx.admin.create({
@@ -69,8 +72,18 @@ const createAdmin = async (req: Request) => {
   return result;
 };
 
+const getAllUsers = async (page: number, limit: number) => {
+  const skip = (page - 1) * limit;
+  const result = await prisma.user.findMany({
+    skip,
+    take: limit,
+  });
+  return result;
+};
+
 export const UserService = {
   createPatient,
   createDoctor,
   createAdmin,
+  getAllUsers,
 };

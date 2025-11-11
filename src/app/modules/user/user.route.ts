@@ -6,6 +6,9 @@ import { UserValidation } from "./user.validation";
 
 const router = Router();
 
+router.get("/", UserController.getAllUsers);
+
+// Create User
 router.post(
   "/create-patient",
   fileUploader.upload.single("file"),
