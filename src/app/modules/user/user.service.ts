@@ -4,7 +4,9 @@ import prisma from "../../shared/prisma";
 import { ICreatePatientInput } from "./user.interface";
 import bcrypt from "bcryptjs";
 import { fileUploader } from "../../helper/fileUploader";
-import { UserRole } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
+import { IOptions, paginationHelper } from "../../helper/paginationHelper";
+import { userSearchableFields } from "./user.constants";
 
 const createPatient = async (req: Request) => {
   if (req.file) {
@@ -72,31 +74,45 @@ const createAdmin = async (req: Request) => {
   return result;
 };
 
-const getAllUsers = async (
-  page: number,
-  limit: number,
-  searchTerm?: string,
-  sortBy?: string,
-  sort?: string
-) => {
-  const skip = (page - 1) * limit;
+const getAllUsers = async (params, options: IOptions) => {
+  const { page, limit, skip, sortBy, sort } =
+    paginationHelper.calculatePagination(options);
+
+  const { searchTerm, ...filter } = params;
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filter).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filter).map((key) => ({
+        [key]: {
+          equals: (filter as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
   const result = await prisma.user.findMany({
     skip,
     take: limit,
-    where: {
-      email: {
-        contains: searchTerm,
-        mode: "insensitive",
-      },
+    where: whereConditions,
+    orderBy: {
+      [sortBy]: sort,
     },
-    orderBy:
-      sortBy && sort
-        ? {
-            [sortBy]: sort,
-          }
-        : {
-            createdAt: "desc",
-          },
   });
   return result;
 };
