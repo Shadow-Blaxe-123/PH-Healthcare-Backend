@@ -23,12 +23,14 @@ router.post(
 );
 router.post(
   "/create-doctor",
+  auth(UserRole.ADMIN),
   fileUploader.upload.single("file"),
   validateRequest(UserValidation.createDoctorValidationSchema),
   UserController.createDoctor
 );
 router.post(
   "/create-admin",
+  auth(UserRole.ADMIN),
   fileUploader.upload.single("file"),
   validateRequest(UserValidation.createAdminValidationSchema),
   UserController.createAdmin
