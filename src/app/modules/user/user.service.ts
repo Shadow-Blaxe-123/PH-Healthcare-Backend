@@ -72,11 +72,31 @@ const createAdmin = async (req: Request) => {
   return result;
 };
 
-const getAllUsers = async (page: number, limit: number) => {
+const getAllUsers = async (
+  page: number,
+  limit: number,
+  searchTerm?: string,
+  sortBy?: string,
+  sort?: string
+) => {
   const skip = (page - 1) * limit;
   const result = await prisma.user.findMany({
     skip,
     take: limit,
+    where: {
+      email: {
+        contains: searchTerm,
+        mode: "insensitive",
+      },
+    },
+    orderBy:
+      sortBy && sort
+        ? {
+            [sortBy]: sort,
+          }
+        : {
+            createdAt: "desc",
+          },
   });
   return result;
 };

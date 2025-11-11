@@ -31,11 +31,14 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const { page, limit } = req.query;
+  const { page, limit, searchTerm, sortBy, sort } = req.query;
 
   const result = await UserService.getAllUsers(
     Number(page ? page : 1),
-    Number(limit ? limit : 10)
+    Number(limit ? limit : 10),
+    searchTerm as string,
+    sortBy as string,
+    sort as string
   );
   sendResponse(res, {
     statusCode: 200,
