@@ -62,4 +62,6 @@ const insertIntoDB = async (payload: any) => {
   return schedules;
 };
 
-export const ScheduleService = { insertIntoDB };
+const schedulesForDoctor = async () => {};
+
+export const ScheduleService = { insertIntoDB, schedulesForDoctor };
