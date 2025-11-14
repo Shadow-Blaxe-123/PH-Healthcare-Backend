@@ -23,7 +23,8 @@ const schedulesForDoctor = catchAsync(async (req: Request, res: Response) => {
     statusCode: 201,
     success: true,
     message: "Schedule fetched successfully!",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 
