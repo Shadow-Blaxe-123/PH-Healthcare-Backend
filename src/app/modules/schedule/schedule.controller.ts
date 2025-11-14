@@ -20,12 +20,25 @@ const schedulesForDoctor = catchAsync(async (req: Request, res: Response) => {
 
   const result = await ScheduleService.schedulesForDoctor(filters, options);
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: 200,
     success: true,
     message: "Schedule fetched successfully!",
     data: result.data,
     meta: result.meta,
   });
 });
+const deleteScheduleFromDB = catchAsync(async (req: Request, res: Response) => {
+  const result = await ScheduleService.deleteScheduleFromDB(req.params.id);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Schedule deleted successfully!",
+    data: result,
+  });
+});
 
-export const ScheduleController = { insertIntoDB, schedulesForDoctor };
+export const ScheduleController = {
+  insertIntoDB,
+  schedulesForDoctor,
+  deleteScheduleFromDB,
+};
