@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { jwtHelper } from "../helper/jwtHelper";
 import config from "../../config";
+import { IJWTPayload } from "../interfaces";
 
 const auth = (...roles: string[]) => {
   return async (
-    req: Request & { user?: any },
+    req: Request & { user?: IJWTPayload },
     res: Response,
     next: NextFunction
   ) => {
@@ -17,7 +18,7 @@ const auth = (...roles: string[]) => {
         token,
         config.jwt.access_token_secret
       );
-      req.user = verifiedUser;
+      req.user = verifiedUser as IJWTPayload;
       if (roles.length && !roles.includes(verifiedUser.role)) {
         throw new Error("You are not authorized!");
       }
