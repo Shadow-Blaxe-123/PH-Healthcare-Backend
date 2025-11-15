@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { jwtHelper } from "../helper/jwtHelper";
 import config from "../../config";
 import { IJWTPayload } from "../interfaces";
+import ApiError from "../errors/ApiError";
+import status from "http-status";
 
 const auth = (...roles: string[]) => {
   return async (
@@ -12,7 +14,7 @@ const auth = (...roles: string[]) => {
     try {
       const token = req.cookies.accessToken;
       if (!token) {
-        throw new Error("You are not logged in!");
+        throw new ApiError(status.UNAUTHORIZED, "You are not logged in!");
       }
       const verifiedUser = jwtHelper.verifyToken(
         token,
@@ -20,7 +22,7 @@ const auth = (...roles: string[]) => {
       );
       req.user = verifiedUser as IJWTPayload;
       if (roles.length && !roles.includes(verifiedUser.role)) {
-        throw new Error("You are not authorized!");
+        throw new ApiError(status.UNAUTHORIZED, "You are not authorized!");
       }
       next();
     } catch (error) {
