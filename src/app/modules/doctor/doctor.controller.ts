@@ -18,6 +18,16 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     meta: result.meta,
   });
 });
+const getSingleFromDB = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await DoctorService.getSingleFromDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Doctors retrieved successfully!",
+    data: result,
+  });
+});
 
 const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -31,7 +41,20 @@ const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DoctorService.deleteFromDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Doctor deleted successfully!",
+    data: result,
+  });
+});
+
 export const DoctorController = {
   getAllFromDB,
   updateIntoDB,
+  getSingleFromDB,
+  deleteFromDB,
 };
