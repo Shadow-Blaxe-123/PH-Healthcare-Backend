@@ -13,8 +13,9 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Doctor failed successfully!",
-    data: result,
+    message: "Doctors retrieved successfully!",
+    data: result.data,
+    meta: result.meta,
   });
 });
 
