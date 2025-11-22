@@ -6,7 +6,7 @@ import { UserRole } from "@prisma/client";
 const router = Router();
 
 router.get("/", DoctorController.getAllFromDB);
-router.get("/suggestion", DoctorController.getAISuggestions);
+router.post("/suggestion", DoctorController.getAISuggestions);
 router.get("/:id", DoctorController.getSingleFromDB);
 ``;
 

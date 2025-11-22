@@ -63,7 +63,7 @@ const softDelete = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAISuggestions = catchAsync(async (req: Request, res: Response) => {
-  const result = await DoctorService.getAISuggestions();
+  const result = await DoctorService.getAISuggestions(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,

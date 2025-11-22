@@ -199,7 +199,11 @@ const softDelete = async (id: string): Promise<Doctor> => {
   });
 };
 
-const getAISuggestions = async () => {};
+const getAISuggestions = async (payload: { symptoms: string }) => {
+  if (!(payload && payload.symptoms)) {
+    throw new ApiError(status.BAD_REQUEST, "symptoms is required");
+  }
+};
 
 export const DoctorService = {
   getAllFromDB,
