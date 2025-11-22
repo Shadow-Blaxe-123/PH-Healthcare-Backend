@@ -5,6 +5,7 @@ import prisma from "../../shared/prisma";
 import { IDoctorUpdateInput } from "./doctor.interface";
 import ApiError from "../../errors/ApiError";
 import status from "http-status";
+import { openai } from "../../helper/open-router";
 
 const getAllFromDB = async (filters: any, options: IOptions) => {
   const { limit, page, skip, sort, sortBy } =
@@ -225,6 +226,21 @@ const getAISuggestions = async (payload: { symptoms: string }) => {
 
   Return your response in JSON format with full individual doctor data.
   `;
+
+  const completion = await openai.chat.completions.create({
+    model: "z-ai/glm-4.5-air:free",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a helpful AI medical assistant that provides doctor suggestions.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
 };
 
 export const DoctorService = {
