@@ -203,6 +203,16 @@ const getAISuggestions = async (payload: { symptoms: string }) => {
   if (!(payload && payload.symptoms)) {
     throw new ApiError(status.BAD_REQUEST, "symptoms is required");
   }
+  const doctors = await prisma.doctor.findMany({
+    where: { isDeleted: false },
+    include: {
+      doctorSpecialities: {
+        include: {
+          specialities: true,
+        },
+      },
+    },
+  });
 };
 
 export const DoctorService = {
