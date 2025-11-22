@@ -199,10 +199,13 @@ const softDelete = async (id: string): Promise<Doctor> => {
   });
 };
 
+const getAISuggestions = async () => {};
+
 export const DoctorService = {
   getAllFromDB,
   updateIntoDB,
   getSingleFromDB,
   deleteFromDB,
   softDelete,
+  getAISuggestions,
 };

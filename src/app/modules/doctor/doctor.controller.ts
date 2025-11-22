@@ -62,10 +62,21 @@ const softDelete = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAISuggestions = catchAsync(async (req: Request, res: Response) => {
+  const result = await DoctorService.getAISuggestions();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "AI suggestions retrieved successfully",
+    data: result,
+  });
+});
+
 export const DoctorController = {
   getAllFromDB,
   updateIntoDB,
   getSingleFromDB,
   deleteFromDB,
   softDelete,
+  getAISuggestions,
 };
