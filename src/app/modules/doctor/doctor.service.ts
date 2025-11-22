@@ -213,6 +213,18 @@ const getAISuggestions = async (payload: { symptoms: string }) => {
       },
     },
   });
+  const prompt = `
+  You are a medical assistant AI. Based on patient's symptoms, suggest the top 3 most suitable doctors.
+  Each doctor has specialties and years of experience.
+  Only suggest doctors who are relevant to the given symptoms.
+
+  Symptoms: ${payload.symptoms}
+
+  Here is the doctor list (in JSON):
+  ${JSON.stringify(doctors, null, 2)}
+
+  Return your response in JSON format with full individual doctor data.
+  `;
 };
 
 export const DoctorService = {
