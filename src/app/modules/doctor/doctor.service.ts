@@ -91,6 +91,11 @@ const getSingleFromDB = async (id: string) => {
           specialities: true,
         },
       },
+      doctorSchedule: {
+        include: {
+          schedule: true,
+        },
+      },
     },
   });
   return result;
