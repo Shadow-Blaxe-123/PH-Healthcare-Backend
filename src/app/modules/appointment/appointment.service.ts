@@ -1,5 +1,6 @@
 import { IJWTPayload } from "../../interfaces";
 import prisma from "../../shared/prisma";
+import { v4 as uuidv4 } from "uuid";
 
 const createAppointment = async (
   user: IJWTPayload,
@@ -22,6 +23,32 @@ const createAppointment = async (
       isBooked: false,
     },
   });
+
+  const videoCallId = uuidv4();
+
+  const res = await prisma.$transaction(async (tnx) => {
+    const appointmentData = tnx.appointment.create({
+      data: {
+        patientId: patientData.id,
+        doctorId: doctorData.id,
+        scheduleId: isBookedOrNot.scheduleId,
+        videoCallingId: videoCallId,
+      },
+    });
+    await tnx.doctorSchedules.update({
+      where: {
+        doctorId_scheduleId: {
+          doctorId: payload.doctorId,
+          scheduleId: payload.scheduleId,
+        },
+      },
+      data: {
+        isBooked: true,
+      },
+    });
+    return appointmentData;
+  });
+  return res;
 };
 
 export const AppointmentService = {
