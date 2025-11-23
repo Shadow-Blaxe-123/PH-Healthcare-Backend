@@ -6,6 +6,7 @@ import { IDoctorUpdateInput } from "./doctor.interface";
 import ApiError from "../../errors/ApiError";
 import status from "http-status";
 import { openai } from "../../helper/open-router";
+import { extractJsonFromMessage } from "../../helper/extractJsonFromMessage";
 
 const getAllFromDB = async (filters: any, options: IOptions) => {
   const { limit, page, skip, sort, sortBy } =
@@ -241,6 +242,8 @@ const getAISuggestions = async (payload: { symptoms: string }) => {
       },
     ],
   });
+  const res = extractJsonFromMessage(completion.choices[0].message);
+  return res;
 };
 
 export const DoctorService = {
