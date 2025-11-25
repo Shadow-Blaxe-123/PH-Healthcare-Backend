@@ -1,26 +1,43 @@
 import Stripe from "stripe";
+import prisma from "../../shared/prisma";
+import { PaymentStatus } from "@prisma/client";
+import { InputJsonValue } from "@prisma/client/runtime/library";
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
   switch (event.type) {
     case "checkout.session.completed": {
-      const session = event.data.object;
+      const session = event.data.object as any;
       const appointmentId = session.metadata?.appointmentId;
-      const paymentIntentId = session.payment_intent;
-      const email = session.customer_email;
+      const paymentId = session.metadata?.paymentId;
 
-      console.log("✅ Payment successful!");
-      console.log("👉 Appointment ID:", appointmentId);
-      console.log("👉 Payment Intent ID:", paymentIntentId);
-      console.log("👉 Customer Email:", email);
+      await prisma.appointment.update({
+        where: {
+          id: appointmentId,
+        },
+        data: {
+          paymentStatus:
+            session.payment_status === "paid"
+              ? PaymentStatus.PAID
+              : PaymentStatus.UNPAID,
+        },
+      });
+
+      await prisma.payment.update({
+        where: {
+          id: paymentId,
+        },
+        data: {
+          status:
+            session.payment_status === "paid"
+              ? PaymentStatus.PAID
+              : PaymentStatus.UNPAID,
+          paymentGatewayData: session,
+        },
+      });
 
       break;
     }
 
-    case "payment_intent.payment_failed": {
-      const intent = event.data.object;
-      console.log("❌ Payment failed:", intent.id);
-      break;
-    }
     default:
       console.log(`❕Unhandled event type: ${event.type}`);
   }
