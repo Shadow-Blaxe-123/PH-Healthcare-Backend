@@ -49,7 +49,7 @@ const createAppointment = async (
     });
 
     const transactionId = uuidv4();
-    await tnx.payment.create({
+    const paymentData = await tnx.payment.create({
       data: {
         appointmentId: appointmentData.id,
         amount: doctorData.appointmentFee as number,
@@ -64,7 +64,7 @@ const createAppointment = async (
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "bdt",
             product_data: {
               name: `Appointment with ${doctorData.name}`,
             },
@@ -73,11 +73,15 @@ const createAppointment = async (
           quantity: 1,
         },
       ],
+      metadata: {
+        appointmentId: appointmentData.id,
+        paymentId: paymentData.id,
+      },
       success_url: "https://google.com",
       cancel_url: "https://youtube.com",
     });
 
-    return appointmentData;
+    return { paymentUrl: session.url };
   });
   return res;
 };
