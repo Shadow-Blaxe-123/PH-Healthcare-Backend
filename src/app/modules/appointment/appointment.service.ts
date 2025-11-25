@@ -1,3 +1,4 @@
+import { stripe } from "../../helper/stripe";
 import { IJWTPayload } from "../../interfaces";
 import prisma from "../../shared/prisma";
 import { v4 as uuidv4 } from "uuid";
@@ -54,6 +55,26 @@ const createAppointment = async (
         amount: doctorData.appointmentFee as number,
         transactionId,
       },
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: patientData.email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Appointment with ${doctorData.name}`,
+            },
+            unit_amount: (doctorData.appointmentFee as number) * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: "https://google.com",
+      cancel_url: "https://youtube.com",
     });
 
     return appointmentData;
