@@ -1,0 +1,42 @@
+import { Request, Response } from "express";
+import catchAsync from "../../shared/catchAsync";
+import { PrescriptionService } from "./prescription.service";
+import sendResponse from "../../shared/sendResponse";
+import { IJWTPayload } from "../../interfaces";
+import pick from "../../helper/pick";
+
+const createPrescription = catchAsync(
+  async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const user = req.user as IJWTPayload;
+    const result = await PrescriptionService.createPrescription(user, req.body);
+    sendResponse(res, {
+      statusCode: 201,
+      success: true,
+      message: "Prescription created successfully!",
+      data: result,
+    });
+  }
+);
+
+const patientPrescription = catchAsync(
+  async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const user = req.user;
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const result = await PrescriptionService.patientPrescription(
+      user as IJWTPayload,
+      options
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Prescription fetched successfully",
+      meta: result.meta,
+      data: result.data,
+    });
+  }
+);
+
+export const PrescriptionController = {
+  createPrescription,
+  patientPrescription,
+};

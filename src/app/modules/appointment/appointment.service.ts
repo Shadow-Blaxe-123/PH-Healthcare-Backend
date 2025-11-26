@@ -195,14 +195,14 @@ const updateAppointmentStatus = async (
   appointmentId: string,
   status: AppointmentStatus
 ) => {
-  const appointmentData = prisma.appointment.findUniqueOrThrow({
+  const appointmentData = await prisma.appointment.findUniqueOrThrow({
     where: {
       id: appointmentId,
     },
     include: { doctor: true },
   });
   if (user.role === UserRole.DOCTOR) {
-    if (user.email !== UserRole.DOCTOR) {
+    if (user.email !== appointmentData.doctor.email) {
       throw new ApiError(
         httpStatus.BAD_REQUEST,
         "This is not your appointment!"
