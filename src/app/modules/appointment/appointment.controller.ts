@@ -4,6 +4,7 @@ import sendResponse from "../../shared/sendResponse";
 import { AppointmentService } from "./appointment.service";
 import { IJWTPayload } from "../../interfaces";
 import pick from "../../helper/pick";
+import { appointmentFilterableFields } from "./appointment.constants";
 
 const createAppointment = catchAsync(
   async (req: Request & { user?: IJWTPayload }, res: Response) => {
@@ -41,15 +42,15 @@ const getMyAppointment = catchAsync(
   }
 );
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
-  const options = pick(req.query, ["page", "limit", "sortBy", "sort"]);
-  const filters = pick(req.query, ["status", "paymentStatus"]);
+  const filters = pick(req.query, appointmentFilterableFields);
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   const result = await AppointmentService.getAllFromDB(filters, options);
   sendResponse(res, {
-    success: true,
     statusCode: 200,
-    message: "Appointments retrieved successfully!",
-    data: result.data,
+    success: true,
+    message: "Appointment retrieval successfully",
     meta: result.meta,
+    data: result.data,
   });
 });
 

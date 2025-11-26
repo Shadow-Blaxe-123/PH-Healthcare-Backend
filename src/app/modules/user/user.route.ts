@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { UserController } from "./user.controller";
 import { fileUploader } from "../../helper/fileUploader";
 import validateRequest from "../../middlewares/validateRequest";
@@ -12,6 +12,12 @@ router.get(
   "/",
   auth(UserRole.ADMIN, UserRole.DOCTOR),
   UserController.getAllUsers
+);
+
+router.get(
+  "/me",
+  auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  UserController.getMyProfile
 );
 
 // Create User
@@ -34,6 +40,22 @@ router.post(
   fileUploader.upload.single("file"),
   validateRequest(UserValidation.createAdminValidationSchema),
   UserController.createAdmin
+);
+
+router.patch(
+  "/:id/status",
+  auth(UserRole.ADMIN),
+  UserController.changeProfileStatus
+);
+
+router.patch(
+  "/update-my-profile",
+  auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  fileUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    return UserController.updateMyProfie(req, res, next);
+  }
 );
 
 export const userRoutes = router;
