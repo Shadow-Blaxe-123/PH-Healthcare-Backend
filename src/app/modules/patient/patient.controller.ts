@@ -5,6 +5,7 @@ import { patientFilterableFields } from "./patient.constants";
 import pick from "../../helper/pick";
 import { PatientService } from "./patient.service";
 import sendResponse from "../../shared/sendResponse";
+import { IJWTPayload } from "../../interfaces";
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, patientFilterableFields);
@@ -43,9 +44,22 @@ const softDelete = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const updateIntoDB = catchAsync(
+  async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const user = req.user as IJWTPayload;
+    const result = await PatientService.updateIntoDB(user, req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Patient updated successfully",
+      data: result,
+    });
+  }
+);
 
 export const PatientController = {
   getAllFromDB,
   getByIdFromDB,
   softDelete,
+  updateIntoDB,
 };
